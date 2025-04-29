@@ -1,17 +1,11 @@
-
-
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import { redirect } from "next/navigation";
-import { Grid, TextField } from "@mui/material";
+"use client";
+import { Box, Grid, Pagination, Stack, TextField } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { listProduct } from "@/features/product/product.action";
-// import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import ProductCard from "@/components/product-cart/product-cart";
+import styles from "./products.module.css"
+import { MoonLoader } from "react-spinners";
 export interface Products {
   id: number;
   title: string;
@@ -22,73 +16,93 @@ export interface Products {
   image: string;
   thumbnail: string;
   reviews: {
+    date:string
     reviewerName: string;
     comment: string;
   }[];
 }
 
-export default function ProductCard({ products }: { products: {products :Products[]}}) {
-    console.log(products)
-//   const dispatch = useDispatch();
-//   const [search, setSearch] = useState("");
-//   const [page, setPage] = useState(1);
-//   const [limit, setLimit] = useState(8);
+export default function ProductsPage() {
+  const dispatch = useDispatch();
+  const [search, setSearch] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
+  const [limit] = useState<number>(8);
+  const isLoading =  useSelector(
+    (state: { product: {isLoading : boolean }}) =>
+      state.product.isLoading
+  );
 
-  // dispatch(listProduct({search, limit, page}));
+  useEffect(() => {
+    dispatch(
+      listProduct({
+        limit,
+        page,
+        search,
+      })
+    );
+  }, [search, limit, page]);
 
-//   const products = useSelector(
-//     (state: { product: { products: { products: Products[] } } }) =>
-//       state.product.products
-//   );
-
+  const products = useSelector(
+    (state: { product: { products: { products: Products[] } } }) =>
+      state.product.products
+  );
+  const totalPages = useSelector(
+    (state: { product: {totalPages:number} }) =>
+      state.product.totalPages
+  );
   return (
     <>
-      {/* <TextField
-        label="Search Product"
-        onChange={(e) => {
-          setSearch(e.target.value);
-        }}
-      ></TextField> */}
-      <Grid container spacing={2}>
+      <Box className={styles["products"]}>
+        <Box className={styles["text-feild"]}>
+          <TextField
+            id="text-feild"
+            label="Search Porducts"
+            variant="filled"
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+          />
+        </Box>
+       { !isLoading ? <> <Grid container height="85%" spacing={2}>
         {products?.products?.map((product) => (
-          <Grid size={{ xs: 12, md: 6, xl: 3 }} key={product.id}>
-            <Card
-              sx={{ maxWidth: 345, cursor: "pointer" }}
-              onClick={() => redirect(`products/${product.id}`)}
-            >
-              <CardMedia
-                component="img"
-                alt="green iguana"
-                height="140"
-                image={product.thumbnail}
-              />
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  {product.title}
-                </Typography>
-                <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  {product.description}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button
-                  onClick={() => redirect(`products/${product.id}`)}
-                  variant="contained"
-                  size="small"
-                >
-                  Details
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
+          <ProductCard
+            key={product.id}
+            name={product.title}
+            description={product.description}
+            price={product.price}
+            rating={product.rating}
+            image={product.thumbnail}
+            id={product.id}
+            thumbnail={product.thumbnail}
+            title={product.title}
+            reviews={product.reviews}
+          />
         ))}
       </Grid>
+
+        <Box className={styles["pagination"]}>
+          <Stack spacing={2}>
+            <Pagination
+              defaultPage={1}
+              page={page}
+              count={totalPages}
+              variant="outlined"
+              shape="rounded"
+              onChange={(e, page: number) => {
+                setPage(page);
+              }}
+            />
+          </Stack>
+        </Box>
+        </>
+         : 
+         <Box sx={{display:"flex", alignItems:"center", justifyContent:"center"}}>
+          <MoonLoader />
+          </Box>}
+      </Box>
+
+     
     </>
   );
 }
-
-export const getStaticProps = async () => {
- const products = listProduct()
-//   const products = useSelector((state: any) => state.product.products);
-  return { props: { products } };
-};

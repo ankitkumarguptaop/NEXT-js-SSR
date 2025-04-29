@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
-    GetProduct,
+  GetProduct,
 getProductService,ListProduct,listProductService
 } from "../../services/product.service";
 import {LIST ,GET } from "./product.type";

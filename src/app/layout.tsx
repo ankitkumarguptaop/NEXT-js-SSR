@@ -13,7 +13,7 @@ export default function RootLayout({
       <body>
         <AppRouterCacheProvider>
           <ReduxProvider>
-          <Container maxWidth="xl" sx={{ backgroundColor: "red" }}>
+          <Container maxWidth="xl" sx={{ backgroundColor: "#ebe7dd" }}>
             {children}
           </Container>
           </ReduxProvider>

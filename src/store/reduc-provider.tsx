@@ -3,7 +3,6 @@
 
 import { Provider } from "react-redux";
 import { store } from "./store";
-import { JSX } from "@emotion/react/jsx-runtime";
 import { ReactNode } from "react";
 
 interface ReduxProviderProps {

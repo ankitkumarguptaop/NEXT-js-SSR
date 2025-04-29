@@ -1,0 +1,16 @@
+.text-feild{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+}
+
+.pagination{
+    margin: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.products{
+    height: 90vh;
+}

@@ -5,13 +5,15 @@ import {
   getProduct,
  
 } from "./product.action";
+import { act } from "react";
 
 
 export const productSlice = createSlice({
   name: "product",
   initialState: {
     products: [],
-    product: [],
+    totalPages:0,
+    product: {},
     isLoading: false,
     error: null,
   },
@@ -23,7 +25,7 @@ export const productSlice = createSlice({
       })
       .addCase(listProduct.fulfilled, (state: any, action: any) => {
         state.products = action.payload;
-
+        state.totalPages =   Math.ceil(action.payload.total / action.payload.limit)
         state.isLoading = false;
       })
       .addCase(listProduct.rejected, (state, action: any) => {
@@ -39,7 +41,6 @@ export const productSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(getProduct.rejected, (state, action: any) => {
-    
         state.isLoading = false;
         state.error = action.error?.message || null;
       })
